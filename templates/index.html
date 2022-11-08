@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Drones</title>
+</head>
+<body>
+    <form>
+        <h1>Swarm Drones</h1>
+        {% for drone in drone_list %}
+            <h3>Name: {{ drone.name }}</h3>
+            <h5>ID: {{ drone.drone_id }}</h5>
+            <h5>IP: {{ drone.drone_ip }}</h5>
+        {% endfor %}
+        <a href="/add_drone"><input type="button" size="100" value="Add Drone"></a>
+        <h2>Create Sequence</h2>
+        {% for command in drone_commands %}
+            <p>{{ command }}</p>
+        {% endfor %}
+        <a href="/move_left"><input type="button" size="100" value="Left"></a>
+        <a href="/move_right"><input type="button" size="100" value="Right"></a>
+        <a href="/move_forward"><input type="button" size="100" value="Forward"></a>
+        <a href="/clear_all_commands"><input type="button" size="100" value="Clear Commands"></a>
+        <a href="/start_operation"><input type="button" size="100" value="Begin Operation"></a>
+    </form>
+
+</body>
+</html>
