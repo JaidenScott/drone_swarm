@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-from Model.models import DroneModel
+from Model.models import DroneModel, db
 from flask_sqlalchemy import SQLAlchemy
 from djitellopy.swarm import TelloSwarm
 
@@ -9,32 +9,51 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///drone_DB.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-drone_list = []
 drone_commands = []
+
+db.init_app(app)
 
 
 @app.route('/', methods=["POST","GET"])
 def index():
-    if request.form:
-        drone = DroneModel(request.form.get("id"), request.form.get("name"), request.form.get("ip"))
-        drone_list.append(drone)
+    drone_list = DroneModel.query.all()
+    print(drone_list)
+    # drone_list.append(drone)
     return render_template('index.html', drone_list=drone_list, drone_commands=drone_commands)
+
+
+@app.before_first_request
+def create_table():
+    db.create_all()
 
 
 @app.route('/add_drone', methods=["POST","GET"])
 def add_drone():
-    return render_template('add_drone.html')
+    if request.method == 'GET':
+        return render_template('add_drone.html')
+    if request.method == 'POST':
+        drone = DroneModel(request.form.get("id"), request.form.get("name"), request.form.get("ip"))
+        db.session.add(drone)
+        db.session.commit()
+        return redirect(url_for("index"))
+
+
+@app.route('/delete_drone', methods=["POST", "GET"])
+def delete_drone():
+    if request.method == 'GET':
+        return render_template("delete_drone.html")
+    if request.method == 'POST':
+        id = request.form.get("ID")
+        drone = DroneModel.query.filter_by(drone_id=id).first()
+        if drone is not None:
+            db.session.delete(drone)
+            db.session.commit()
+        return redirect(url_for("index"))
 
 
 @app.route('/command_added')
 def command_added():
     return render_template('command_added.html')
-
-
-@app.before_first_request
-def create_table():
-    pass
-    #db.create_all()
 
 
 @app.route('/move_left')
@@ -64,11 +83,12 @@ def clear_all_commands():
 @app.route('/start_operation')
 def start_operation():
     drone_ips = []
+    drone_list = DroneModel.query.all()
+
     for i in drone_list:
         drone_ips.append(i.drone_ip)
-
+    print(drone_ips)
     if len(drone_ips) != 0:
-        operation_status = ""
         swarm = TelloSwarm.fromIps(drone_ips)
 
         swarm.connect()
@@ -85,8 +105,6 @@ def start_operation():
 
         swarm.land()
         swarm.end()
-    else:
-        operation_status = "Cant start operation without drones"
 
     return redirect(url_for("index"))
 

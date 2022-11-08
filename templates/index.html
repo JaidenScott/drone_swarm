@@ -8,11 +8,12 @@
     <form>
         <h1>Swarm Drones</h1>
         {% for drone in drone_list %}
-            <h3>Name: {{ drone.name }}</h3>
-            <h5>ID: {{ drone.drone_id }}</h5>
-            <h5>IP: {{ drone.drone_ip }}</h5>
+            <h2>{{ drone.drone_id }}</h2>
+            <h4>{{ drone.name }}</h4>
+            <h4>{{ drone.drone_ip }}</h4>
         {% endfor %}
         <a href="/add_drone"><input type="button" size="100" value="Add Drone"></a>
+        <a href="/delete_drone"><input type="button" value="Delete Drone"></a>
         <h2>Create Sequence</h2>
         {% for command in drone_commands %}
             <p>{{ command }}</p>
