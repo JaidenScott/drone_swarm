@@ -6,13 +6,32 @@
 </head>
 <body>
     <form>
-        <h1>Swarm Drones</h1>
-        {% for drone in drone_list %}
-            <h2>{{ drone.drone_id }}</h2>
-            <h4>{{ drone.name }}</h4>
-            <h4>{{ drone.drone_ip }}</h4>
-            <h4>battery: {{ drone.drone_battery }}</h4>
-        {% endfor %}
+        <div align="middle">
+            <img src="{{ url_for('static', filename='logo2.png') }}"/>
+        </div>
+        <table border="1px">
+            <thead>
+                <th>ID</th>
+                <th>Name</th>
+                <th>IP</th>
+                <th>Battery</th>
+            </thead>
+            <tbody>
+                {% for drone in drone_list %}
+                    <tr>
+                        <td width="50">{{ drone.drone_id }}</td>
+                        <td width="100">{{ drone.name }}</td>
+                        <td width="150">{{ drone.drone_ip }}</td>
+                        <td width="100">{{ drone.drone_battery }}</td>
+                    </tr>
+                    <!--<h2>{{ drone.drone_id }}</h2>
+                    <h4>{{ drone.name }}</h4>
+                    <h4>{{ drone.drone_ip }}</h4>
+                    <h4>battery: {{ drone.drone_battery }}</h4>-->
+                {% endfor %}
+            </tbody>
+
+        </table>
         <a href="/add_drone"><input type="button" size="100" value="Add Drone"></a>
         <a href="/delete_drone"><input type="button" value="Delete Drone"></a>
         <h2>Create Sequence</h2>

@@ -3,6 +3,7 @@ from Model.models import DroneModel, db
 from flask_sqlalchemy import SQLAlchemy
 from djitellopy.swarm import TelloSwarm
 from djitellopy import Tello
+import time
 #from celery import Celery
 #from celery import shared_task
 
@@ -120,19 +121,22 @@ def operate_drones():
             db.session.commit()
             index += 1
 
-        swarm.takeoff()
+        if len(drone_commands) != 0:
+            swarm.takeoff()
+            for i in drone_commands:
+                print(i)
+                if i == "left":
+                    swarm.move_left(100)
+                    time.sleep(4)
+                if i == "right":
+                    swarm.move_right(100)
+                    time.sleep(4)
+                if i == "forward":
+                    swarm.move_forward(100)
+                    time.sleep(4)
+            swarm.land()
 
-        for i in drone_commands:
-            print(i)
-            if i == "left":
-                swarm.move_left(100)
-            if i == "right":
-                swarm.move_right(100)
-            if i == "forward":
-                swarm.move_forward(100)
-
-        swarm.land()
-        swarm.end()
+            swarm.end()
 
 
 if __name__ == '__main__':
