@@ -11,6 +11,7 @@
             <h2>{{ drone.drone_id }}</h2>
             <h4>{{ drone.name }}</h4>
             <h4>{{ drone.drone_ip }}</h4>
+            <h4>battery: {{ drone.drone_battery }}</h4>
         {% endfor %}
         <a href="/add_drone"><input type="button" size="100" value="Add Drone"></a>
         <a href="/delete_drone"><input type="button" value="Delete Drone"></a>

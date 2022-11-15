@@ -2,8 +2,14 @@ from flask import Flask, render_template, request, redirect, url_for
 from Model.models import DroneModel, db
 from flask_sqlalchemy import SQLAlchemy
 from djitellopy.swarm import TelloSwarm
+from djitellopy import Tello
+#from celery import Celery
+#from celery import shared_task
 
 
+URL = "redis://default:redispw@172.20.20.99:49153"
+# on application start create worker using .\venv\Scripts\celery.exe -A drone_controller.celery_app_name worker
+#celery = Celery('tasks', broker=URL)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///drone_DB.db'
@@ -82,16 +88,38 @@ def clear_all_commands():
 
 @app.route('/start_operation')
 def start_operation():
+    #operate_drones.delay()
+    operate_drones()
+    #drone = DroneModel.query.filter_by(drone_id=2).first()
+    #drone.drone_battery = "100"
+    #db.session.commit()
+    return redirect(url_for("index"))
+
+
+#@shared_task
+def operate_drones():
+    index = 0
     drone_ips = []
+    drone_batteries = []
     drone_list = DroneModel.query.all()
 
     for i in drone_list:
         drone_ips.append(i.drone_ip)
+
     print(drone_ips)
     if len(drone_ips) != 0:
         swarm = TelloSwarm.fromIps(drone_ips)
-
         swarm.connect()
+        drone_batteries.clear()
+        for i in swarm:
+            battery = i.battery
+            drone_batteries.append(battery)
+        for i in drone_list:
+            drone = DroneModel.query.filter_by(drone_id=i.drone_id).first()
+            drone.drone_battery = drone_batteries[index]
+            db.session.commit()
+            index += 1
+
         swarm.takeoff()
 
         for i in drone_commands:
@@ -105,8 +133,6 @@ def start_operation():
 
         swarm.land()
         swarm.end()
-
-    return redirect(url_for("index"))
 
 
 if __name__ == '__main__':

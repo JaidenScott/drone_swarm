@@ -12,6 +12,7 @@ class DroneModel(db.Model):
     drone_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     drone_ip = db.Column(db.String)
+    drone_battery = db.Column(db.String)
     #drone_id = ""
     #name = ""
     #ip = ""
@@ -20,6 +21,7 @@ class DroneModel(db.Model):
         self.drone_id = drone_id
         self.name = name
         self.drone_ip = drone_ip
+        self.drone_battery = "Unknown"
 
 
 
