@@ -5,12 +5,15 @@
     <title>Add Drone</title>
 </head>
 <body>
-<form method="post">
-    <p>ID: <input type="text" name="id"></p>
-    <p>Name: <input type="text" name="name"></p>
-    <p>IP: <input type="text" name="ip"></p>
-    <p><input type="submit" value="Add"></p>
-    <a href="/"><input type="button" value="back"></a>
-</form>
+    <div align="middle">
+        <img src="{{ url_for('static', filename='logo2.png') }}"/>
+    </div>
+    <form method="post">
+        <p>ID: <input type="text" name="id"></p>
+        <p>Name: <input type="text" name="name"></p>
+        <p>IP: <input type="text" name="ip"></p>
+        <p><input type="submit" value="Add"></p>
+        <a href="/"><input type="button" value="back"></a>
+    </form>
 </body>
 </html>
